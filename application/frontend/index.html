@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud-Native Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Cloud-Native Task Manager</h1>
+        <p class="subtitle">AWS EKS Deployment Project</p>
+
+        <div class="card">
+            <h2>Tasks</h2>
+            <div id="tasks">Loading tasks...</div>
+        </div>
+
+        <div class="status">
+            Backend Status:
+            <span id="status">Checking...</span>
+        </div>
+    </div>
+
+    <script>
+        const backendUrl = "http://localhost:5000";
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(`${backendUrl}/tasks`);
+                const tasks = await response.json();
+
+                const taskContainer = document.getElementById("tasks");
+
+                taskContainer.innerHTML = tasks.map(task => `
+                    <div class="task">
+                        <span>${task.title}</span>
+                        <span class="${task.completed ? 'completed' : 'pending'}">
+                            ${task.completed ? 'Completed' : 'Pending'}
+                        </span>
+                    </div>
+                `).join("");
+
+                document.getElementById("status").textContent = "Healthy";
+            } catch (error) {
+                document.getElementById("tasks").textContent =
+                    "Unable to connect to backend";
+
+                document.getElementById("status").textContent = "Unavailable";
+            }
+        }
+
+        loadTasks();
+    </script>
+
+</body>
+</html>
